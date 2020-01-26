@@ -9,11 +9,12 @@ int out_close = D1;
 int TorState = D4;
 int TorStateOld;
 unsigned long previousMillis = 0;        // will store last time LED was updated
-const long MinZu = 350;
-const long MaxZu = 700;
-const long MinAuf = MaxZu;
-const long MaxAuf =1000;
-const long interval = MaxAuf;           // interval at which to blink (milliseconds)
+const long MinZu = 400;
+const long MaxZu = 600;
+const long MinAuf = 900;
+const long MaxAuf = 1000;
+const long MinInterval = MaxAuf;           // interval at which to blink (milliseconds)
+const long MaxInterval = 2000;           // interval at which to blink (milliseconds)
 
 unsigned long Time;          //Periodendauer in us
 
@@ -51,20 +52,19 @@ Time = currentMillis - previousMillis;
     
 
     if (input != TorStateOld) {
-//      Serial.println("Tor State hat sich unter 2 Sek geändert");
-//      Serial.print("Time : ");
-//      Serial.println(Time);
-      
+Serial.print("Time : ");
+Serial.println(Time);
+
       TorStateOld = input;
       
-      if (state_str != "Tor fährt zu" && Time < 700 && Time > 350){
+      if (state_str != "Tor fährt auf" && state_str != "Tor fährt zu" && Time < MaxZu && Time > MinZu){
       state_str = ("Tor fährt zu");
            
       Serial.println("Tor fahrtzu");
 
       }
 
-      if (state_str != "Tor fährt auf" && Time < interval && Time > 700){
+      if (state_str != "Tor fährt zu" && state_str != "Tor fährt auf" && Time < MaxAuf && Time > MinAuf){
       state_str = ("Tor fährt auf");
            
       Serial.println("Tor fahrtauf");
@@ -80,7 +80,9 @@ previousMillis = currentMillis;
     
 
   }
-   if (input == TorStateOld && input == LOW && Time > interval) {
+   if (input == TorStateOld && input == LOW && Time > MinInterval && Time < MaxInterval) {
+Serial.print("Time : ");
+Serial.println(Time);
 
       if (state_str != "Tor offen"){
       Serial.println("Tor offen");
@@ -92,8 +94,10 @@ previousMillis = currentMillis;
       digitalWrite(out_open, HIGH);
       
     }
-    if (input == TorStateOld && input == HIGH && Time > interval) {
-      
+    if (input == TorStateOld && input == HIGH && Time > MinInterval && Time < MaxInterval) {
+Serial.print("Time : ");
+Serial.println(Time);
+
       if (state_str != "Tor zu"){
       Serial.println("Tor zu");
       state_str = ("Tor zu");
